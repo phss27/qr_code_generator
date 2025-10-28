@@ -1,66 +1,116 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import {QRCodeCanvas} from 'qrcode.react';
+import { FaUpload } from "react-icons/fa";
+import { useRef, useState } from "react";
+import { useLogoUpload } from "@/hooks/useLogoUpload";
+import { qrCodeDownload } from '@/hooks/qrCodeDownload';
 
 export default function Home() {
+  const [linkValue, setlinkValue] = useState<string>('');  
+  const [fgColor, setfgColor] = useState<string>('#000');  
+  const [bgColor, setbgColor] = useState<string>('#fff');  
+  const { logoUrl, handleLogoChange } = useLogoUpload();  
+  const qrCodeRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="container">
+      <section className="title-container">
+        <h1 className="page-title">
+          Gere e customize 
+          QR Codes <span>dinâmicos</span>
+        </h1>
+        <img 
+          src="/arrow.svg" 
+          alt="arrow-down" 
+          className="arrow-detail"
         />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+      </section>
+
+      <section className="qr-code-container">
+        <div className="qr-code">
+          <div className="link-input">
+            <label htmlFor="link">
+              Digite seu link
+            </label>
+          </div>
+          <input 
+            type="text" 
+            id="link" 
+            placeholder="Seu link aqui" 
+            value={linkValue}
+            onChange={(e) => setlinkValue(e.target.value)}
+          />
+
+          <div className="qr-code-preview">
+            <p>
+                QR Code Preview
+            </p>
+
+            <div ref={qrCodeRef}>
+                <QRCodeCanvas
+                value={linkValue}
+                title={linkValue}
+                size={logoUrl ? 256 : 128}
+                bgColor={bgColor}
+                fgColor={fgColor}
+                imageSettings={logoUrl ? {
+                    src: logoUrl,
+                    x: undefined,
+                    y: undefined,
+                    height: 24,
+                    width: 24,
+                    opacity: 1,
+                    excavate: true,
+                    crossOrigin: 'anonymous'
+                } : undefined}
+                />
+            </div>
+            
+          </div>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="qr-code-customization">
+            <div className="customization-container">
+                <h3>
+                    Cores
+                </h3>
+                <div className="input-container colors">
+                    <div className="input-box">
+                        <label htmlFor="fgColor">
+                            Cor principal
+                        </label>
+                        <input 
+                            type="color" 
+                            className="input-color"
+                            id="fgColor" 
+                            value={fgColor}
+                            onChange={(e) => setfgColor(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="input-box">
+                        <label htmlFor="bgColor">
+                            Cor do fundo
+                        </label>
+                        <input 
+                            type="color" 
+                            className="input-color"
+                            id="bgColor" 
+                            value={bgColor}
+                            onChange={(e) => setbgColor(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </div>    
+
+            <button className="download-button" 
+                onClick={() => qrCodeDownload(qrCodeRef)}
+            >
+                Baixar QR Code    
+            </button>          
         </div>
-      </main>
-    </div>
+      </section>
+    </main> 
   );
 }
