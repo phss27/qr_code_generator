@@ -13,6 +13,14 @@ export default function Home() {
   const { logoUrl, handleLogoChange } = useLogoUpload();  
   const qrCodeRef = useRef<HTMLDivElement>(null);
 
+  const handleDownload = () => {
+    if (!linkValue.trim()) {
+      alert('Por favor, insira um link antes de baixar o QR Code');
+      return;
+    }
+    qrCodeDownload(qrCodeRef);
+  };
+
   return (
     <main className="container">
       <section className="title-container">
@@ -104,8 +112,10 @@ export default function Home() {
                 </div>
             </div>    
 
-            <button className="download-button" 
-                onClick={() => qrCodeDownload(qrCodeRef)}
+            <button 
+                className="download-button" 
+                onClick={handleDownload}
+                disabled={!linkValue.trim()}
             >
                 Baixar QR Code    
             </button>          
